@@ -19,8 +19,6 @@
   .eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
   h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
   .subtitle { font-size: 13px; color: var(--muted); margin-bottom: 32px; line-height: 1.5; }
-
-  /* PIN box */
   .pin-box { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 28px 20px; text-align: center; margin-bottom: 20px; }
   .pin-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
   .pin-digits { font-family: var(--mono); font-size: 52px; font-weight: 700; letter-spacing: 0.22em; line-height: 1; transition: filter 0.6s ease, color 0.4s ease; user-select: none; }
@@ -28,28 +26,18 @@
   .pin-digits.visible { filter: blur(0); color: var(--accent); }
   .pin-digits.revealed-final { filter: blur(0); color: var(--success); }
   .pin-empty { font-family: var(--mono); font-size: 36px; letter-spacing: 0.25em; color: var(--border); line-height: 1; }
-
-  /* Banners */
   .banner { border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: none; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; line-height: 1.4; }
   .banner.active { display: flex; }
-  .banner-warn { background: rgba(245,166,35,0.1); border: 1px solid var(--warn); color: var(--warn); }
   .banner-success { background: rgba(78,203,113,0.1); border: 1px solid var(--success); color: var(--success); }
-  .banner-accent { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); }
-
-  /* Entry timer bar */
   .entry-bar-wrap { margin-bottom: 20px; display: none; }
   .entry-bar-wrap.active { display: block; }
   .entry-bar-label { font-size: 11px; color: var(--warn); margin-bottom: 6px; display: flex; justify-content: space-between; }
   .entry-bar-track { background: var(--border); border-radius: 99px; height: 5px; overflow: hidden; }
   .entry-bar-fill { height: 100%; background: var(--warn); border-radius: 99px; transition: width 0.5s linear; }
-
-  /* Countdown */
   .countdown-wrap { background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; }
   .countdown-wrap.active { display: flex; }
   .countdown-label { font-size: 12px; color: var(--accent); font-weight: 500; }
   .countdown-time { font-family: var(--mono); font-size: 16px; color: var(--accent); font-weight: 700; }
-
-  /* Time picker */
   .section-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.06em; margin-bottom: 10px; }
   .time-row { display: flex; gap: 10px; margin-bottom: 24px; align-items: flex-end; }
   .time-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
@@ -58,8 +46,6 @@
   .time-group input::-webkit-inner-spin-button, .time-group input::-webkit-outer-spin-button { -webkit-appearance: none; }
   .time-group input:focus { border-color: var(--accent); }
   .time-sep { font-family: var(--mono); font-size: 24px; color: var(--muted); padding-bottom: 10px; font-weight: 700; }
-
-  /* Buttons */
   .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-family: var(--sans); font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.02em; margin-bottom: 10px; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
@@ -77,14 +63,12 @@
   <h1>PIN Vault</h1>
   <p class="subtitle">Generate a PIN, enter it into Screen Time, then it hides itself until your chosen time.</p>
 
-  <!-- PIN Display -->
   <div class="pin-box">
     <p class="pin-label" id="pinLabel">Your PIN</p>
     <div id="pinEmpty" class="pin-empty">— — — —</div>
     <div id="pinDigits" class="pin-digits hidden" style="display:none"></div>
   </div>
 
-  <!-- Entry window countdown bar -->
   <div class="entry-bar-wrap" id="entryBarWrap">
     <div class="entry-bar-label">
       <span>⏳ Visible window — enter it in Screen Time now</span>
@@ -93,18 +77,15 @@
     <div class="entry-bar-track"><div class="entry-bar-fill" id="entryBarFill" style="width:100%"></div></div>
   </div>
 
-  <!-- Countdown to reveal -->
   <div class="countdown-wrap" id="countdownWrap">
     <span class="countdown-label">🔒 Reveals in</span>
     <span class="countdown-time" id="countdownTime">--:--:--</span>
   </div>
 
-  <!-- Ready banner -->
   <div class="banner banner-success" id="revealBanner">
     <span>✅</span> Time's up — tap Reveal to see your PIN
   </div>
 
-  <!-- SETUP section -->
   <div id="setupSection">
     <p class="section-label">Lock delay (after the 30s entry window)</p>
     <div class="time-row">
@@ -127,7 +108,6 @@
     <p class="status-note">You'll have 30 seconds to type the PIN into Screen Time before it hides.</p>
   </div>
 
-  <!-- LOCKED section -->
   <div id="lockedSection" style="display:none">
     <button class="btn btn-success" id="revealBtn" onclick="revealPin()" disabled>Reveal PIN</button>
     <hr class="divider">
@@ -136,25 +116,19 @@
 </div>
 
 <script>
-  const ENTRY_WINDOW = 30; // seconds visible before hiding
+  const ENTRY_WINDOW = 30;
   let pin = null, revealAt = null, entryEndsAt = null;
   let mainTicker = null, entryTicker = null;
 
-  // Restore
   (function restore() {
     try {
-      const s = JSON.parse(sessionStorage.getItem('pinVault') || 'null');
+      const s = JSON.parse(localStorage.getItem('pinVault') || 'null');
       if (!s || !s.pin) return;
       pin = s.pin; revealAt = s.revealAt; entryEndsAt = s.entryEndsAt;
       showPinDigits();
-      if (Date.now() < entryEndsAt) {
-        startEntryWindow();
-      } else {
-        hidePinNow();
-        showLockedUI();
-      }
+      if (Date.now() < entryEndsAt) { startEntryWindow(); } else { hidePinNow(); showLockedUI(); }
       mainTicker = setInterval(mainTick, 500);
-    } catch(e) { sessionStorage.removeItem('pinVault'); }
+    } catch(e) { localStorage.removeItem('pinVault'); }
   })();
 
   function generate() {
@@ -163,46 +137,34 @@
     const s = parseInt(document.getElementById('secs').value)||0;
     const delayMs = (h*3600 + m*60 + s) * 1000;
     if (delayMs < 1000) { alert('Please set at least 1 second delay.'); return; }
-
     pin = String(Math.floor(Math.random()*10000)).padStart(4,'0');
     entryEndsAt = Date.now() + ENTRY_WINDOW * 1000;
     revealAt = entryEndsAt + delayMs;
-
-    sessionStorage.setItem('pinVault', JSON.stringify({pin, revealAt, entryEndsAt}));
-
-    showPinDigits();
-    showPinVisible();
-    startEntryWindow();
-    showLockedUI();
+    localStorage.setItem('pinVault', JSON.stringify({pin, revealAt, entryEndsAt}));
+    showPinDigits(); showPinVisible(); startEntryWindow(); showLockedUI();
     document.getElementById('setupSection').style.display = 'none';
-
     mainTicker = setInterval(mainTick, 500);
   }
 
   function showPinDigits() {
     document.getElementById('pinEmpty').style.display = 'none';
     const pd = document.getElementById('pinDigits');
-    pd.style.display = 'block';
-    pd.textContent = pin;
+    pd.style.display = 'block'; pd.textContent = pin;
   }
 
   function showPinVisible() {
-    const pd = document.getElementById('pinDigits');
-    pd.className = 'pin-digits visible';
+    document.getElementById('pinDigits').className = 'pin-digits visible';
     document.getElementById('pinLabel').textContent = '👁 Enter this in Screen Time now';
   }
 
   function hidePinNow() {
-    const pd = document.getElementById('pinDigits');
-    pd.className = 'pin-digits hidden';
+    document.getElementById('pinDigits').className = 'pin-digits hidden';
     document.getElementById('pinLabel').textContent = 'Your PIN';
     document.getElementById('entryBarWrap').classList.remove('active');
     clearInterval(entryTicker);
   }
 
-  function showLockedUI() {
-    document.getElementById('lockedSection').style.display = 'block';
-  }
+  function showLockedUI() { document.getElementById('lockedSection').style.display = 'block'; }
 
   function startEntryWindow() {
     document.getElementById('entryBarWrap').classList.add('active');
@@ -248,7 +210,7 @@
     if (!confirm('Clear the current PIN and start over?')) return;
     clearInterval(mainTicker); clearInterval(entryTicker);
     pin = null; revealAt = null; entryEndsAt = null;
-    sessionStorage.removeItem('pinVault');
+    localStorage.removeItem('pinVault');
     document.getElementById('pinEmpty').style.display = 'block';
     document.getElementById('pinDigits').style.display = 'none';
     document.getElementById('pinLabel').textContent = 'Your PIN';
